@@ -1,0 +1,935 @@
+/* ==========================================================================
+   Academic Schedule & Timetable - Design System & Stylesheet
+   ========================================================================== */
+
+/* Design Tokens & Theme Variables */
+:root {
+    /* Fonts */
+    --font-primary: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    
+    /* Sleek Muted Palette for Light Mode */
+    --bg-main: #f8fafc;
+    --text-primary: #0f172a;
+    --text-secondary: #475569;
+    --text-muted: #94a3b8;
+    
+    --glass-bg: rgba(255, 255, 255, 0.45);
+    --glass-border: rgba(255, 255, 255, 0.6);
+    --glass-shadow: 0 8px 32px 0 rgba(15, 23, 42, 0.05);
+    --glass-blur: blur(25px) saturate(180%);
+    
+    --accent: #6366f1; /* Indigo */
+    --accent-hover: #4f46e5;
+    --accent-bg: rgba(99, 102, 241, 0.1);
+    
+    --danger: #ef4444; /* Leaf Red */
+    --danger-bg: rgba(239, 68, 68, 0.08);
+    
+    --badge-bg: rgba(255, 255, 255, 0.6);
+    --badge-text: #334155;
+    
+    --border-radius-sm: 8px;
+    --border-radius-md: 16px;
+    --border-radius-lg: 24px;
+    
+    --transition-smooth: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    --transition-bounce: all 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* Global Reset */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font-primary);
+    background-color: var(--bg-main);
+    color: var(--text-primary);
+    min-height: 100vh;
+    overflow-x: hidden;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 6rem 1rem 7rem 1rem; /* Added top padding for Dynamic Island */
+    transition: background-color 0.8s ease;
+}
+
+/* Background Canvas for Three.js Elements */
+#bg-canvas {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: -1;
+    pointer-events: none;
+}
+
+/* Glassmorphism Class Modifier */
+.glass {
+    background: var(--glass-bg);
+    border: 1px solid var(--glass-border);
+    backdrop-filter: var(--glass-blur);
+    -webkit-backdrop-filter: var(--glass-blur);
+    box-shadow: var(--glass-shadow);
+    transition: var(--transition-smooth);
+}
+
+/* Dynamic Island Floating Pill */
+#dynamic-island-container {
+    position: fixed;
+    top: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    perspective: 1000px;
+}
+
+#dynamic-island {
+    background: rgba(15, 23, 42, 0.93);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 30px;
+    color: white;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
+                height 0.4s cubic-bezier(0.16, 1, 0.3, 1), 
+                border-radius 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    width: 250px;
+    height: 38px;
+    overflow: hidden;
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Island Collapsed View */
+.island-collapsed {
+    width: 100%;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 0 16px;
+    opacity: 1;
+    transition: opacity 0.3s ease;
+    flex-shrink: 0;
+}
+
+.island-status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background-color: var(--text-muted);
+}
+
+.island-status-dot.green {
+    background-color: #22c55e;
+    box-shadow: 0 0 8px #22c55e;
+}
+
+.island-status-dot.yellow {
+    background-color: #eab308;
+    box-shadow: 0 0 8px #eab308;
+}
+
+.island-status-dot.red {
+    background-color: #ef4444;
+    box-shadow: 0 0 8px #ef4444;
+}
+
+#island-collapsed-text {
+    font-size: 0.8rem;
+    font-weight: 300;
+    letter-spacing: -0.01em;
+}
+
+/* Island Expanded View */
+.island-expanded {
+    display: flex;
+    flex-direction: column;
+    padding: 18px 24px;
+    gap: 12px;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.2s ease;
+    flex-grow: 1;
+}
+
+/* Island Hover State - Dynamic Expansion */
+#dynamic-island:hover {
+    width: 330px;
+    height: 144px;
+    border-radius: 28px;
+}
+
+#dynamic-island:hover .island-collapsed {
+    opacity: 0;
+    height: 0;
+    pointer-events: none;
+}
+
+#dynamic-island:hover .island-expanded {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.island-expanded-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.island-expanded-row.current .val {
+    font-size: 1.05rem;
+    font-weight: 500;
+    color: white;
+}
+
+.island-expanded-row.next .val {
+    font-size: 0.85rem;
+    font-weight: 300;
+    color: rgba(255, 255, 255, 0.7);
+}
+
+.island-expanded-row .label {
+    font-size: 0.65rem;
+    font-weight: 600;
+    color: var(--text-muted);
+    letter-spacing: 0.05em;
+    width: 60px;
+    flex-shrink: 0;
+}
+
+.island-expanded-row .time {
+    font-size: 0.75rem;
+    font-weight: 300;
+    color: var(--text-muted);
+}
+
+.island-timer {
+    font-size: 0.75rem;
+    font-weight: 300;
+    color: rgba(255, 255, 255, 0.5);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    padding-top: 8px;
+    text-align: center;
+}
+
+/* Main Container Layout */
+#app-container {
+    width: 100%;
+    max-width: 900px;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+/* App Header Styling */
+.app-header {
+    padding: 2rem;
+    border-radius: var(--border-radius-lg);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+}
+
+.header-main {
+    display: flex;
+    flex-direction: column;
+}
+
+.college-logo-text {
+    font-size: 0.75rem;
+    font-weight: 200;
+    letter-spacing: 0.25em;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    margin-bottom: 0.25rem;
+}
+
+.app-header h1 {
+    font-size: 2.25rem;
+    font-weight: 100;
+    letter-spacing: -0.03em;
+    line-height: 1.1;
+    color: var(--text-primary);
+}
+
+.sub-heading {
+    font-size: 0.85rem;
+    font-weight: 300;
+    color: var(--text-secondary);
+    margin-top: 0.35rem;
+}
+
+/* Month Selector Controls */
+.month-selector {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    position: relative;
+}
+
+.month-display-container {
+    width: 160px;
+    height: 48px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    position: relative;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.month-label {
+    font-size: 1.35rem;
+    font-weight: 200;
+    color: var(--text-primary);
+    text-align: center;
+    white-space: nowrap;
+    position: absolute;
+    width: 100%;
+    transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.4s ease;
+}
+
+.month-label.slide-out-left {
+    transform: translateX(-100%);
+    opacity: 0;
+}
+
+.month-label.slide-out-right {
+    transform: translateX(100%);
+    opacity: 0;
+}
+
+.month-label.slide-in-left {
+    transform: translateX(-100%);
+    opacity: 0;
+}
+
+.month-label.slide-in-right {
+    transform: translateX(100%);
+    opacity: 0;
+}
+
+.month-label.active {
+    transform: translateX(0);
+    opacity: 1;
+}
+
+.nav-btn {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 1px solid var(--glass-border);
+    background: var(--glass-bg);
+    color: var(--text-primary);
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    outline: none;
+    transition: var(--transition-bounce);
+}
+
+.nav-btn:hover {
+    transform: scale(1.1);
+    background: var(--accent-bg);
+    color: var(--accent);
+    border-color: var(--accent);
+}
+
+.nav-btn:active {
+    transform: scale(0.95);
+}
+
+.nav-btn:disabled {
+    opacity: 0.15;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.nav-btn:disabled:hover {
+    background: var(--glass-bg);
+    color: var(--text-primary);
+    border-color: var(--glass-border);
+    transform: none;
+}
+
+.nav-btn svg {
+    width: 20px;
+    height: 20px;
+    stroke-width: 1.5;
+}
+
+/* Calendar Grid Container */
+#calendar-wrapper {
+    border-radius: var(--border-radius-lg);
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    position: relative;
+    user-select: none;
+    touch-action: pan-y;
+}
+
+/* Week Days Header Row */
+.days-header {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    text-align: center;
+    font-size: 0.8rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Calendar Month Days Grid */
+.days-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 0.5rem;
+}
+
+/* Calendar Grid Cell */
+.day-cell {
+    aspect-ratio: 1;
+    border-radius: var(--border-radius-md);
+    background: rgba(255, 255, 255, 0.35);
+    /* Make date cell borders highly visible with crisp outlines */
+    border: 1.5px solid rgba(255, 255, 255, 0.8);
+    box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.5), 0 2px 4px rgba(0, 0, 0, 0.02);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.6rem 0.4rem 0.4rem 0.4rem;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: var(--transition-bounce);
+}
+
+.day-cell:hover {
+    transform: scale(1.05);
+    background: rgba(255, 255, 255, 0.7);
+    border-color: var(--accent);
+    box-shadow: 0 4px 20px rgba(99, 102, 241, 0.08);
+}
+
+/* Cell State - Placeholder/Empty Days (Remove before/after months other than academic) */
+.empty-cell {
+    aspect-ratio: 1;
+    border-radius: var(--border-radius-md);
+    /* Very light thin border for grid alignment outline */
+    border: 1px solid rgba(0, 0, 0, 0.03);
+    background: rgba(255, 255, 255, 0.04);
+    pointer-events: none;
+}
+
+/* Cell State - Today Highlight */
+.day-cell.today {
+    background: var(--accent-bg);
+    border: 1.5px solid var(--accent);
+    box-shadow: 0 0 15px rgba(99, 102, 241, 0.15);
+}
+
+.day-cell.today .day-number {
+    font-weight: 500;
+    color: var(--accent);
+}
+
+/* Cell State - Custom Marked Leave */
+.day-cell.leave {
+    background: var(--danger-bg) !important;
+    border-color: rgba(239, 68, 68, 0.35);
+}
+
+/* Leave Days - Red and Bold Text Numbers only */
+.day-cell.holiday .day-number,
+.day-cell.leave .day-number {
+    color: var(--danger) !important;
+    font-weight: 700 !important;
+}
+
+/* Date Number Typography */
+.day-number {
+    font-size: 1.25rem;
+    font-weight: 200;
+    color: var(--text-primary);
+}
+
+/* Day Order Indicator Mini-Badge */
+.day-order-indicator {
+    font-size: 0.65rem;
+    font-weight: 400;
+    padding: 0.15rem 0.35rem;
+    border-radius: var(--border-radius-sm);
+    background: var(--badge-bg);
+    color: var(--badge-text);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    margin-top: 0.2rem;
+    text-transform: uppercase;
+}
+
+/* Header Dress Code Badge Icons */
+.cell-attire-badge {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    font-size: 0.75rem;
+    opacity: 0.85;
+}
+
+/* Banner overlay for recalculations */
+.recalc-banner {
+    border-radius: var(--border-radius-md);
+    padding: 0.85rem 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    border-left: 4px solid var(--accent);
+    animation: fadeInSlideUp 0.5s ease forwards;
+}
+
+.recalc-banner svg {
+    width: 18px;
+    height: 18px;
+    color: var(--accent);
+    flex-shrink: 0;
+}
+
+.hidden {
+    display: none !important;
+}
+
+/* Floating Taskbar */
+.floating-taskbar {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 100;
+    padding: 0.6rem 1.2rem;
+    border-radius: 100px;
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+    box-shadow: 0 10px 40px -10px rgba(15, 23, 42, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+}
+
+.taskbar-btn {
+    border: none;
+    background: transparent;
+    color: var(--text-primary);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.2rem;
+    font-family: var(--font-primary);
+    font-size: 0.65rem;
+    font-weight: 300;
+    padding: 0.25rem 0.5rem;
+    outline: none;
+    transition: var(--transition-bounce);
+}
+
+.taskbar-btn:hover {
+    transform: translateY(-2px);
+    color: var(--accent);
+}
+
+.taskbar-btn svg {
+    width: 18px;
+    height: 18px;
+    stroke-width: 1.5;
+}
+
+/* Modals Overlay Base */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(8px);
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 1.5rem;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.modal-overlay.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Modal Content Panel */
+.modal-content {
+    width: 100%;
+    max-width: 500px;
+    border-radius: var(--border-radius-lg);
+    padding: 2rem;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08);
+    transform: scale(0.95) translateY(10px);
+    transition: var(--transition-bounce);
+}
+
+.modal-overlay.active .modal-content {
+    transform: scale(1) translateY(0);
+}
+
+/* Modal Header Layout */
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 1.5rem;
+    gap: 1.5rem;
+}
+
+.modal-header-title h2 {
+    font-size: 1.5rem;
+    font-weight: 200;
+    color: var(--text-primary);
+    letter-spacing: -0.01em;
+}
+
+.modal-badges {
+    display: flex;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.badge {
+    font-size: 0.7rem;
+    font-weight: 400;
+    padding: 0.2rem 0.6rem;
+    border-radius: 50px;
+    color: var(--text-secondary);
+}
+
+.close-btn {
+    border: none;
+    background: transparent;
+    color: var(--text-primary);
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: var(--transition-smooth);
+    outline: none;
+}
+
+.close-btn:hover {
+    background: rgba(0, 0, 0, 0.05);
+    transform: rotate(90deg);
+}
+
+/* Interactive Timetable modal details */
+.leave-toggle-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem;
+    border-radius: var(--border-radius-md);
+    margin-bottom: 1.5rem;
+}
+
+.leave-toggle-info {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+}
+
+.leave-toggle-title {
+    font-size: 0.9rem;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.leave-toggle-desc {
+    font-size: 0.75rem;
+    font-weight: 300;
+    color: var(--text-secondary);
+}
+
+/* Switch styling iOS style */
+.switch {
+    position: relative;
+    display: inline-block;
+    width: 44px;
+    height: 24px;
+    flex-shrink: 0;
+}
+
+.switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: var(--text-muted);
+    transition: .4s;
+    border-radius: 34px;
+}
+
+.slider::before {
+    position: absolute;
+    content: "";
+    height: 18px;
+    width: 18px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .4s;
+    border-radius: 50%;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+}
+
+input:checked + .slider {
+    background-color: var(--accent);
+}
+
+input:focus + .slider {
+    box-shadow: 0 0 1px var(--accent);
+}
+
+input:checked + .slider::before {
+    transform: translateX(20px);
+}
+
+/* Timetable List Grid layout */
+.timetable-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    max-height: 380px;
+    overflow-y: auto;
+    padding-right: 0.5rem;
+}
+
+/* Custom Scrollbar for list container */
+.timetable-list::-webkit-scrollbar {
+    width: 4px;
+}
+
+.timetable-list::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.timetable-list::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 50px;
+}
+
+/* Timetable Period Item */
+.timetable-item {
+    display: grid;
+    grid-template-columns: 80px 1fr;
+    align-items: center;
+    padding: 0.85rem 1rem;
+    border-radius: var(--border-radius-md);
+    background: rgba(255, 255, 255, 0.25);
+    border: 1.5px solid rgba(255, 255, 255, 0.8);
+    gap: 1rem;
+}
+
+.time-slot {
+    display: flex;
+    flex-direction: column;
+}
+
+.time-start {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--text-primary);
+}
+
+.time-end {
+    font-size: 0.7rem;
+    font-weight: 300;
+    color: var(--text-secondary);
+}
+
+.period-details {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.subject-info {
+    display: flex;
+    flex-direction: column;
+}
+
+.subject-name {
+    font-size: 0.95rem;
+    font-weight: 400;
+    color: var(--text-primary);
+}
+
+.faculty-name {
+    font-size: 0.75rem;
+    font-weight: 300;
+    color: var(--text-secondary);
+}
+
+.period-badge {
+    font-size: 0.65rem;
+    padding: 0.15rem 0.45rem;
+    border-radius: var(--border-radius-sm);
+    background: var(--badge-bg);
+    color: var(--badge-text);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    text-transform: uppercase;
+}
+
+/* Special Items - Break, Lunch, Free, Holiday */
+.timetable-item.break-period {
+    background: rgba(255, 255, 255, 0.05);
+    border-style: dashed;
+    opacity: 0.8;
+}
+
+.timetable-item.break-period .subject-name {
+    font-style: italic;
+    color: var(--text-secondary);
+}
+
+.timetable-item.holiday-item {
+    grid-template-columns: 1fr;
+    text-align: center;
+    padding: 2.5rem 1rem;
+    border-style: dashed;
+    border-color: var(--danger);
+    background: var(--danger-bg);
+}
+
+.timetable-item.holiday-item h3 {
+    color: var(--danger);
+    font-weight: 400;
+    font-size: 1.1rem;
+}
+
+.timetable-item.holiday-item p {
+    font-size: 0.8rem;
+    font-weight: 300;
+    color: var(--text-secondary);
+    margin-top: 0.25rem;
+}
+
+/* Animations */
+@keyframes fadeInSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive Styles */
+@media (max-width: 640px) {
+    body {
+        padding: 6.5rem 0.5rem 6.5rem 0.5rem;
+    }
+    
+    #dynamic-island:hover {
+        width: 300px;
+        height: 144px;
+    }
+    
+    .app-header {
+        padding: 1.25rem;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    
+    .app-header h1 {
+        font-size: 1.75rem;
+    }
+    
+    #calendar-wrapper {
+        padding: 0.75rem;
+        border-radius: var(--border-radius-md);
+    }
+    
+    .days-header {
+        font-size: 0.7rem;
+    }
+    
+    .days-grid {
+        gap: 0.3rem;
+    }
+    
+    .day-cell, .empty-cell {
+        border-radius: 10px;
+        padding: 0.4rem 0.2rem 0.2rem 0.2rem;
+    }
+    
+    .day-number {
+        font-size: 0.95rem;
+    }
+    
+    .day-order-indicator {
+        font-size: 0.55rem;
+        padding: 0.05rem 0.2rem;
+        letter-spacing: -0.02em;
+    }
+    
+    .floating-taskbar {
+        width: 90%;
+        bottom: 16px;
+    }
+    
+    .modal-content {
+        padding: 1.5rem;
+    }
+    
+    .timetable-item {
+        grid-template-columns: 1fr;
+        gap: 0.4rem;
+        padding: 0.75rem;
+    }
+    
+    .time-slot {
+        flex-direction: row;
+        gap: 0.5rem;
+        align-items: baseline;
+    }
+}
