@@ -1,2 +1,234 @@
-# Academic_calender-IIBCA
-calander
+<!DOCTYPE html>
+<!-- saved from url=(0022)http://localhost:8080/ -->
+<html lang="en"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Academic Calendar &amp; Timetable</title>
+    <!-- Google Fonts - Inter with premium font weights -->
+    <link rel="preconnect" href="https://fonts.googleapis.com/">
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="">
+    <link href="./Academic Calendar &amp; Timetable_files/css2" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="./Academic Calendar &amp; Timetable_files/lucide@latest"></script>
+    <!-- Three.js for premium background animation -->
+    <script src="./Academic Calendar &amp; Timetable_files/three.min.js.download"></script>
+    <link rel="stylesheet" href="./Academic Calendar &amp; Timetable_files/style.css">
+</head>
+<body>
+    <!-- Premium Three.js Ambient Canvas Background -->
+    <canvas id="bg-canvas" width="1920" height="889" style="width: 1280px; height: 593px;"></canvas>
+
+    <!-- Floating Dynamic Island -->
+    <div id="dynamic-island-container">
+        <div id="dynamic-island" class="island-pill">
+            <div class="island-collapsed">
+                <span class="island-status-dot grey" id="island-status-dot"></span>
+                <span id="island-collapsed-text">Classes Ended</span>
+            </div>
+            <div class="island-expanded">
+                <div class="island-expanded-row current">
+                    <span class="label">CURRENT</span>
+                    <span id="island-current-subject" class="val">College Closed</span>
+                    <span id="island-current-time" class="time">Ended at 03:30 PM</span>
+                </div>
+                <div class="island-expanded-row next">
+                    <span class="label">NEXT</span>
+                    <span id="island-next-subject" class="val">Next classes: Tomorrow</span>
+                </div>
+                <div id="island-timer" class="island-timer">Have a good evening!</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Container -->
+    <main id="app-container">
+        <!-- Floating Header -->
+        <header class="app-header glass">
+            <div class="header-main">
+                <span class="college-logo-text">NILGIRI COLLEGE</span>
+                <h1>Academic Schedule</h1>
+                <span class="sub-heading">II BCA | Academic Year 2026-27</span>
+            </div>
+
+            <!-- Month Navigator with Slide Effect -->
+            <div class="month-selector">
+                <button id="prev-month-btn" class="nav-btn glass" aria-label="Previous Month">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="chevron-left" aria-hidden="true" class="lucide lucide-chevron-left"><path d="m15 18-6-6 6-6"></path></svg>
+                </button>
+                <div class="month-display-container">
+                    <div id="month-year-label" class="month-label">July 2026</div>
+                </div>
+                <button id="next-month-btn" class="nav-btn glass" aria-label="Next Month">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="chevron-right" aria-hidden="true" class="lucide lucide-chevron-right"><path d="m9 18 6-6-6-6"></path></svg>
+                </button>
+            </div>
+        </header>
+
+        <!-- Calendar Month View Container (Swipeable) -->
+        <section id="calendar-wrapper" class="glass">
+            <!-- Day Names Header -->
+            <div class="days-header">
+                <div>Mon</div>
+                <div>Tue</div>
+                <div>Wed</div>
+                <div>Thu</div>
+                <div>Fri</div>
+                <div>Sat</div>
+                <div>Sun</div>
+            </div>
+            <!-- Calendar Days Grid (Populated dynamically) -->
+            <div id="calendar-grid" class="days-grid"><div class="empty-cell"></div><div class="empty-cell"></div><div class="day-cell today"><span class="day-number">1</span><span class="day-order-indicator">D3</span><span class="cell-attire-badge" title="Blazer Day">🧥</span></div><div class="day-cell"><span class="day-number">2</span><span class="day-order-indicator">D4</span></div><div class="day-cell"><span class="day-number">3</span><span class="day-order-indicator">D5</span></div><div class="day-cell"><span class="day-number">4</span><span class="day-order-indicator">D1</span><span class="cell-attire-badge" title="Casual / Formal Attire Day">👕👖</span></div><div class="day-cell holiday"><span class="day-number">5</span></div><div class="day-cell"><span class="day-number">6</span><span class="day-order-indicator">D2</span></div><div class="day-cell"><span class="day-number">7</span><span class="day-order-indicator">D3</span></div><div class="day-cell"><span class="day-number">8</span><span class="day-order-indicator">D4</span><span class="cell-attire-badge" title="Blazer Day">🧥</span></div><div class="day-cell"><span class="day-number">9</span><span class="day-order-indicator">D5</span></div><div class="day-cell"><span class="day-number">10</span><span class="day-order-indicator">D1</span></div><div class="day-cell holiday"><span class="day-number">11</span></div><div class="day-cell holiday"><span class="day-number">12</span></div><div class="day-cell"><span class="day-number">13</span><span class="day-order-indicator">D2</span></div><div class="day-cell"><span class="day-number">14</span><span class="day-order-indicator">D3</span></div><div class="day-cell"><span class="day-number">15</span><span class="day-order-indicator">D4</span><span class="cell-attire-badge" title="Blazer Day">🧥</span></div><div class="day-cell"><span class="day-number">16</span><span class="day-order-indicator">D5</span></div><div class="day-cell"><span class="day-number">17</span><span class="day-order-indicator">D1</span></div><div class="day-cell holiday"><span class="day-number">18</span></div><div class="day-cell holiday"><span class="day-number">19</span></div><div class="day-cell"><span class="day-number">20</span><span class="day-order-indicator">D2</span></div><div class="day-cell"><span class="day-number">21</span><span class="day-order-indicator">D3</span></div><div class="day-cell"><span class="day-number">22</span><span class="day-order-indicator">D4</span><span class="cell-attire-badge" title="Blazer Day">🧥</span></div><div class="day-cell"><span class="day-number">23</span><span class="day-order-indicator">D5</span></div><div class="day-cell"><span class="day-number">24</span><span class="day-order-indicator">D1</span></div><div class="day-cell"><span class="day-number">25</span><span class="day-order-indicator">D2</span><span class="cell-attire-badge" title="Casual / Formal Attire Day">👕👖</span></div><div class="day-cell holiday"><span class="day-number">26</span></div><div class="day-cell"><span class="day-number">27</span><span class="day-order-indicator">D3</span></div><div class="day-cell"><span class="day-number">28</span><span class="day-order-indicator">D4</span></div><div class="day-cell"><span class="day-number">29</span><span class="day-order-indicator">D5</span><span class="cell-attire-badge" title="Blazer Day">🧥</span></div><div class="day-cell"><span class="day-number">30</span><span class="day-order-indicator">D1</span></div><div class="day-cell"><span class="day-number">31</span><span class="day-order-indicator">D2</span></div><div class="empty-cell"></div><div class="empty-cell"></div><div class="empty-cell"></div><div class="empty-cell"></div><div class="empty-cell"></div><div class="empty-cell"></div><div class="empty-cell"></div><div class="empty-cell"></div><div class="empty-cell"></div></div>
+        </section>
+
+        <!-- Dynamic Shift Warning Overlay -->
+        <div id="dayorder-recalc-banner" class="recalc-banner glass hidden">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="info" aria-hidden="true" class="lucide lucide-info"><circle cx="12" cy="12" r="10"></circle><path d="M12 16v-4"></path><path d="M12 8h.01"></path></svg>
+            <span>Calendar Day Orders updated dynamically due to leave modification.</span>
+        </div>
+    </main>
+
+    <!-- Floating Liquid Glassmorphism Taskbar -->
+    <nav class="floating-taskbar glass">
+        <button id="today-btn" class="taskbar-btn" title="Jump to Today">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="calendar-days" aria-hidden="true" class="lucide lucide-calendar-days"><path d="M8 2v4"></path><path d="M16 2v4"></path><rect width="18" height="18" x="3" y="4" rx="2"></rect><path d="M3 10h18"></path><path d="M8 14h.01"></path><path d="M12 14h.01"></path><path d="M16 14h.01"></path><path d="M8 18h.01"></path><path d="M12 18h.01"></path><path d="M16 18h.01"></path></svg>
+            <span>Today</span>
+        </button>
+    </nav>
+
+    <!-- Interactive Timetable Pop-up Modal -->
+    <div id="timetable-modal" class="modal-overlay hidden active">
+        <div class="modal-content glass">
+            <header class="modal-header">
+                <div class="modal-header-title">
+                    <h2 id="modal-date-label">Friday, Jul 17, 2026</h2>
+                    <div class="modal-badges">
+                        <span id="modal-day-order-badge" class="badge glass">Day Order 1</span>
+                        <span id="modal-attire-badge" class="badge glass hidden">🧥 Blazer Dress Code Required</span>
+                    </div>
+                </div>
+                <button class="close-btn" id="close-timetable-btn" aria-label="Close">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" data-lucide="x" aria-hidden="true" class="lucide lucide-x"><path d="M18 6 6 18"></path><path d="m6 6 12 12"></path></svg>
+                </button>
+            </header>
+
+            <div class="modal-body">
+                <!-- Leave Toggle Switch -->
+                <div class="leave-toggle-container glass">
+                    <div class="leave-toggle-info">
+                        <span class="leave-toggle-title">Mark This Day Leave</span>
+                        <span class="leave-toggle-desc">Flags unexpected holiday and pushes the Day Order forward</span>
+                    </div>
+                    <label class="switch">
+                        <input type="checkbox" id="leave-toggle-input">
+                        <span class="slider round"></span>
+                    </label>
+                </div>
+
+                <!-- Timetable List -->
+                <div id="timetable-view" class="timetable-list"><div class="timetable-item">
+                    <div class="time-slot">
+                        <span class="time-start">09:45 AM</span>
+                        <span class="time-end">10:25 AM</span>
+                    </div>
+                    <div class="period-details">
+                        <div class="subject-info">
+                            <span class="subject-name">Operational Research (OR)</span>
+                            <span class="faculty-name">AA Aathira Ma'am</span>
+                        </div>
+                        <span class="period-badge">Period 1</span>
+                    </div>
+                </div><div class="timetable-item">
+                    <div class="time-slot">
+                        <span class="time-start">10:25 AM</span>
+                        <span class="time-end">11:05 AM</span>
+                    </div>
+                    <div class="period-details">
+                        <div class="subject-info">
+                            <span class="subject-name">Language</span>
+                            <span class="faculty-name">Arabic</span>
+                        </div>
+                        <span class="period-badge">Period 2</span>
+                    </div>
+                </div><div class="timetable-item break-period">
+                    <div class="time-slot">
+                        <span class="time-start">11:05 AM</span>
+                        <span class="time-end">11:25 AM</span>
+                    </div>
+                    <div class="period-details">
+                        <div class="subject-info">
+                            <span class="subject-name">Interval</span>
+                            <span class="faculty-name">Recess</span>
+                        </div>
+                        <span class="period-badge">REST</span>
+                    </div>
+                </div><div class="timetable-item">
+                    <div class="time-slot">
+                        <span class="time-start">11:25 AM</span>
+                        <span class="time-end">12:05 PM</span>
+                    </div>
+                    <div class="period-details">
+                        <div class="subject-info">
+                            <span class="subject-name">Java Theory</span>
+                            <span class="faculty-name">Anjali Kuruvila</span>
+                        </div>
+                        <span class="period-badge">Period 3</span>
+                    </div>
+                </div><div class="timetable-item">
+                    <div class="time-slot">
+                        <span class="time-start">12:05 PM</span>
+                        <span class="time-end">12:45 PM</span>
+                    </div>
+                    <div class="period-details">
+                        <div class="subject-info">
+                            <span class="subject-name">Java Lab</span>
+                            <span class="faculty-name">Muthukumar</span>
+                        </div>
+                        <span class="period-badge">Period 4</span>
+                    </div>
+                </div><div class="timetable-item break-period">
+                    <div class="time-slot">
+                        <span class="time-start">12:45 PM</span>
+                        <span class="time-end">02:00 PM</span>
+                    </div>
+                    <div class="period-details">
+                        <div class="subject-info">
+                            <span class="subject-name">Lunch Break</span>
+                            <span class="faculty-name">Recess</span>
+                        </div>
+                        <span class="period-badge">REST</span>
+                    </div>
+                </div><div class="timetable-item">
+                    <div class="time-slot">
+                        <span class="time-start">02:00 PM</span>
+                        <span class="time-end">02:50 PM</span>
+                    </div>
+                    <div class="period-details">
+                        <div class="subject-info">
+                            <span class="subject-name">3D Modeling</span>
+                            <span class="faculty-name">Shanthi</span>
+                        </div>
+                        <span class="period-badge">Period 5</span>
+                    </div>
+                </div><div class="timetable-item">
+                    <div class="time-slot">
+                        <span class="time-start">02:50 PM</span>
+                        <span class="time-end">03:30 PM</span>
+                    </div>
+                    <div class="period-details">
+                        <div class="subject-info">
+                            <span class="subject-name">LGMC Hour</span>
+                            <span class="faculty-name">Class Tutor</span>
+                        </div>
+                        <span class="period-badge">Period 6</span>
+                    </div>
+                </div></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="./Academic Calendar &amp; Timetable_files/calendar_data.js.download"></script>
+    <script src="./Academic Calendar &amp; Timetable_files/app.js.download"></script>
+
+
+</body></html>
